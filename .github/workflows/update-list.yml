@@ -46,11 +46,17 @@ jobs:
 
           # 3. clean, deduplicate and save
           tr -d '\r' < "$TEMP_FILE" | sort -u | sed '/^\s*$/d' > "$OUTPUT_FILE"
-          rm "$TEMP_FILE"
 
+          # 4. stats for README
+          DOMAIN_COUNT=$(wc -l < "$FINAL_FILE" | xargs)
+          LAST_UPDATED=$(date -u +'%Y-%m-%d_%H:%M_UTC')
+          sed -i "s/count-[0-9]*-blue/count-$DOMAIN_COUNT-blue/g" README.md
+          sed -i "s/updated-.*-green/updated-$LAST_UPDATED-green/g" README.md
+
+          rm "$TEMP_FILE"
       - name: Commit and Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add domains.txt
+          git add domains.txt README.md
           git diff --quiet && git diff --staged --quiet || (git commit -m "Automated update: $(date -u)" && git push)

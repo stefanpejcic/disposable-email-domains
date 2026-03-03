@@ -2,7 +2,7 @@ name: Update Disposable Email List
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -19,9 +19,11 @@ jobs:
       - name: Fetch and Process Lists
         run: |
           TEMP_FILE="temp_raw_list.txt"
-          OUTPUT_FILE="domains.txt"
+          OUTPUT_TXT="domains.txt"
+          OUTPUT_JSON="domains.json"
+          OUTPUT_CSV="domains.csv"
 
-          # 1. Process Text and JSON URLs
+          # 1. Fetching from sources
           URLS=(
               "https://disposable.github.io/disposable-email-domains/domains.txt"
               "https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/main/disposable_email_blocklist.conf"
@@ -32,24 +34,26 @@ jobs:
           )
 
           for url in "${URLS[@]}"; do
-              # Download, remove JSON chars, remove carriage returns
               curl -sL "$url" | sed 's/[\[\]" ,]//g' | tr -d '\r' >> "$TEMP_FILE"
           done
 
-          # 2. Advanced Clean: 
-          # - grep: Only keep lines that look like domains (contain a dot, no start-hashes)
-          # - awk: Ensure length is greater than 3 (ignores '.', ':', etc)
-          # - sed: lowercase everything
+          # 2. Clean and generate TXT
           grep -E '^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$' "$TEMP_FILE" | \
           awk 'length($0) > 3' | \
-          sort -u > "$OUTPUT_FILE"
+          sort -u > "$OUTPUT_TXT"
 
-          # 3. Stats for README
-          DOMAIN_COUNT=$(wc -l < "$OUTPUT_FILE" | xargs)
-          # Use a simpler date format (no colons) for the badge to avoid sed issues
+          # 3. Generate JSON (Array format)
+          # Uses jq to turn the lines into a valid JSON array safely
+          jq -R . "$OUTPUT_TXT" | jq -s . > "$OUTPUT_JSON"
+
+          # 4. Generate CSV (Single column with header)
+          echo "domain" > "$OUTPUT_CSV"
+          cat "$OUTPUT_TXT" >> "$OUTPUT_CSV"
+
+          # 5. Stats for README
+          DOMAIN_COUNT=$(wc -l < "$OUTPUT_TXT" | xargs)
           LAST_UPDATED=$(date -u +'%Y--%m--%d') 
           
-          # Use | as a delimiter in sed instead of / to avoid path/date conflicts
           sed -i "s/count-[0-9]*-blue/count-$DOMAIN_COUNT-blue/g" README.md
           sed -i "s/updated-[^ ]*-green/updated-$LAST_UPDATED-green/g" README.md
 
@@ -59,5 +63,6 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add domains.txt README.md
+          # Added the new files to git add
+          git add domains.txt domains.json domains.csv README.md
           git diff --quiet && git diff --staged --quiet || (git commit -m "Automated update: $(date -u)" && git push)

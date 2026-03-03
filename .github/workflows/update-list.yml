@@ -30,7 +30,6 @@ jobs:
               "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt"
               "https://raw.githubusercontent.com/wesbos/burner-email-providers/master/emails.txt"
               "https://raw.githubusercontent.com/Propaganistas/Laravel-Disposable-Email/refs/heads/master/domains.json"
-              "https://deviceandbrowserinfo.com/api/emails/disposable"
           )
 
           for url in "${URLS[@]}"; do

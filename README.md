@@ -10,6 +10,7 @@ Lists:
 * [TXT](https://stefanpejcic.github.io/disposable-email-domains/domains.txt): `https://stefanpejcic.github.io/disposable-email-domains/domains.txt`
 * [JSON](https://stefanpejcic.github.io/disposable-email-domains/domains.json): `https://stefanpejcic.github.io/disposable-email-domains/domains.json`
 * [CSV](https://stefanpejcic.github.io/disposable-email-domains/domains.csv): `https://stefanpejcic.github.io/disposable-email-domains/domains.csv`
+
 ---
 
 *If your domain is listed and it is not a domain used for temporary emails, please report it to the appropiate source list.*

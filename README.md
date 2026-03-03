@@ -24,4 +24,3 @@ Sources:
 - [github.com/7c/fakefilter](https://github.com/7c/fakefilter/blob/main/txt/data.txt) (BSD 3-Clause)
 - [github.com/wesbos/burner-email-providers](https://github.com/wesbos/burner-email-providers/blob/master/emails.txt) (MIT license)
 - [github.com/Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email/blob/master/domains.json) (MIT license)
-- [deviceandbrowserinfo.com](https://deviceandbrowserinfo.com/api/emails/disposable)

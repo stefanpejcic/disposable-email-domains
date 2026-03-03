@@ -21,7 +21,7 @@ Sources:
 
 - [disposable.github.io](https://disposable.github.io/disposable-email-domains/domains.txt)
 - [github.com/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains/blob/main/disposable_email_blocklist.conf)
-- [github.com/7c/fakefilter](https://github.com/7c/fakefilter/blob/main/txt/data.txt
+- [github.com/7c/fakefilter](https://github.com/7c/fakefilter/blob/main/txt/data.txt)
 - https://github.com/wesbos/burner-email-providers/blob/master/emails.txt)
 - [github.com/Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email/blob/master/domains.json)
 - [deviceandbrowserinfo.com](https://deviceandbrowserinfo.com/api/emails/disposable)

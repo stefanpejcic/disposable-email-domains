@@ -1,0 +1,56 @@
+name: Update Disposable Email List
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and Process Lists
+        run: |
+          TEMP_FILE="temp_raw_list.txt"
+          OUTPUT_FILE="domains.txt"
+
+          # 1. text files
+          TEXT_URLS=(
+              "https://disposable.github.io/disposable-email-domains/domains.txt"
+              "https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/main/disposable_email_blocklist.conf"
+              "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt"
+              "https://raw.githubusercontent.com/wesbos/burner-email-providers/master/emails.txt"
+          )
+
+          for url in "${TEXT_URLS[@]}"; do
+              curl -sL "$url" | grep -v '^#' >> "$TEMP_FILE"
+          done
+
+          # 2. JSON files
+          JSON_URLS=(
+              "https://raw.githubusercontent.com/Propaganistas/Laravel-Disposable-Email/refs/heads/master/domains.json"
+              "https://deviceandbrowserinfo.com/api/emails/disposable"
+          )
+
+          for url in "${JSON_URLS[@]}"; do
+              # Strips JSON formatting to get raw domain strings
+              curl -sL "$url" | sed 's/[\[\]]//g; s/","/\n/g; s/"//g' >> "$TEMP_FILE"
+          done
+
+          # 3. clean, deduplicate and save
+          tr -d '\r' < "$TEMP_FILE" | sort -u | sed '/^\s*$/d' > "$OUTPUT_FILE"
+          rm "$TEMP_FILE"
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add domains.txt
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Automated update: $(date -u)" && git push)

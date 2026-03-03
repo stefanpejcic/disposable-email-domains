@@ -2,7 +2,7 @@ name: Update Disposable Email List
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -21,39 +21,40 @@ jobs:
           TEMP_FILE="temp_raw_list.txt"
           OUTPUT_FILE="domains.txt"
 
-          # 1. text files
-          TEXT_URLS=(
+          # 1. Process Text and JSON URLs
+          URLS=(
               "https://disposable.github.io/disposable-email-domains/domains.txt"
               "https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/main/disposable_email_blocklist.conf"
               "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt"
               "https://raw.githubusercontent.com/wesbos/burner-email-providers/master/emails.txt"
-          )
-
-          for url in "${TEXT_URLS[@]}"; do
-              curl -sL "$url" | grep -v '^#' >> "$TEMP_FILE"
-          done
-
-          # 2. JSON files
-          JSON_URLS=(
               "https://raw.githubusercontent.com/Propaganistas/Laravel-Disposable-Email/refs/heads/master/domains.json"
               "https://deviceandbrowserinfo.com/api/emails/disposable"
           )
 
-          for url in "${JSON_URLS[@]}"; do
-              # Strips JSON formatting to get raw domain strings
-              curl -sL "$url" | sed 's/[\[\]]//g; s/","/\n/g; s/"//g' >> "$TEMP_FILE"
+          for url in "${URLS[@]}"; do
+              # Download, remove JSON chars, remove carriage returns
+              curl -sL "$url" | sed 's/[\[\]" ,]//g' | tr -d '\r' >> "$TEMP_FILE"
           done
 
-          # 3. clean, deduplicate and save
-          tr -d '\r' < "$TEMP_FILE" | sort -u | sed '/^\s*$/d' > "$OUTPUT_FILE"
+          # 2. Advanced Clean: 
+          # - grep: Only keep lines that look like domains (contain a dot, no start-hashes)
+          # - awk: Ensure length is greater than 3 (ignores '.', ':', etc)
+          # - sed: lowercase everything
+          grep -E '^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$' "$TEMP_FILE" | \
+          awk 'length($0) > 3' | \
+          sort -u > "$OUTPUT_FILE"
 
-          # 4. stats for README
-          DOMAIN_COUNT=$(wc -l < "$FINAL_FILE" | xargs)
-          LAST_UPDATED=$(date -u +'%Y-%m-%d_%H:%M_UTC')
+          # 3. Stats for README
+          DOMAIN_COUNT=$(wc -l < "$OUTPUT_FILE" | xargs)
+          # Use a simpler date format (no colons) for the badge to avoid sed issues
+          LAST_UPDATED=$(date -u +'%Y--%m--%d') 
+          
+          # Use | as a delimiter in sed instead of / to avoid path/date conflicts
           sed -i "s/count-[0-9]*-blue/count-$DOMAIN_COUNT-blue/g" README.md
-          sed -i "s/updated-.*-green/updated-$LAST_UPDATED-green/g" README.md
+          sed -i "s/updated-[^ ]*-green/updated-$LAST_UPDATED-green/g" README.md
 
           rm "$TEMP_FILE"
+
       - name: Commit and Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"

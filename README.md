@@ -19,9 +19,9 @@ Lists:
 
 Sources:
 
-- [disposable.github.io](https://disposable.github.io/disposable-email-domains/domains.txt)
-- [github.com/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains/blob/main/disposable_email_blocklist.conf)
-- [github.com/7c/fakefilter](https://github.com/7c/fakefilter/blob/main/txt/data.txt)
-- https://github.com/wesbos/burner-email-providers/blob/master/emails.txt)
-- [github.com/Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email/blob/master/domains.json)
+- [disposable.github.io](https://disposable.github.io/disposable-email-domains/domains.txt) (MIT license)
+- [github.com/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains/blob/main/disposable_email_blocklist.conf) (CC0 1.0)
+- [github.com/7c/fakefilter](https://github.com/7c/fakefilter/blob/main/txt/data.txt) (BSD 3-Clause)
+- [github.com/wesbos/burner-email-providers](https://github.com/wesbos/burner-email-providers/blob/master/emails.txt) (MIT license)
+- [github.com/Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email/blob/master/domains.json) (MIT license)
 - [deviceandbrowserinfo.com](https://deviceandbrowserinfo.com/api/emails/disposable)

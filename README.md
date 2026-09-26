@@ -1,8 +1,8 @@
 # disposable-email-domains
 Daily-updated list of disposable email domains aggregated from multiple sources.
 
-![Domain Count](https://img.shields.io/badge/domain_count-76389-blue)
-![Last Updated](https://img.shields.io/badge/last_updated-2026--09--25-green)
+![Domain Count](https://img.shields.io/badge/domain_count-76391-blue)
+![Last Updated](https://img.shields.io/badge/last_updated-2026--09--26-green)
 
 ---
 
